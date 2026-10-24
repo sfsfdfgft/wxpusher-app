@@ -37,7 +37,6 @@ import com.smjcco.wxpusher.push.ws.keepalive.KeepWsAliveServiceStarter
 import com.smjcco.wxpusher.utils.PermissionRequester
 import com.smjcco.wxpusher.utils.PermissionUtils
 import com.smjcco.wxpusher.utils.WxpJumpPageUtils
-import com.smjcco.wxpusher.web.WxpWebHostPolicy
 import com.xiaomi.mipush.sdk.MiPushMessage
 import com.xiaomi.mipush.sdk.PushMessageHelper
 
@@ -74,8 +73,15 @@ class WxpMainActivity : WxpBaseActivity(), CurrentTabProvider {
         //开发者传入的原文链接，服务端各推送通道都用这个名字下发
         const val INTENT_KEY_SOURCE_URL = "sourceUrl"
 
-        /** 班级管理系统入口（内部使用），放在第一个 tab 常驻 */
-        val CLASS_SITE_URL = "https://" + WxpWebHostPolicy.CLASS_SITE_HOST + "/"
+        /**
+         * 班级管理系统入口（内部使用），放在第一个 tab 常驻。
+         *
+         * 注意：wangan.xdyzf.cn 不是 WxPusher 官方域名，因此**不加入** WxpWebHostPolicy 白名单。
+         * 非白名单域名会照常显示顶部的「第三方内容」提醒条，这是官方要求保留的提示。
+         * 代价是底部浏览器工具栏默认也会出现，这里用 setBottomBarVisibleOverride(false)
+         * 单独关掉，不靠改白名单实现。
+         */
+        const val CLASS_SITE_URL = "https://wangan.xdyzf.cn/"
     }
 
 
@@ -331,6 +337,10 @@ class WxpMainActivity : WxpBaseActivity(), CurrentTabProvider {
         } else {
             currentMenuProvider = null
         }
+        //班级页面关掉底部浏览器工具栏（后退/前进/刷新/关闭）。
+        //站点是非官方域名，不在 WxpWebHostPolicy 白名单里，默认会显示这条工具栏；
+        //这里按页面单独关闭，不改动官方白名单，顶部「第三方内容」提醒仍然保留。
+        (fragment as? WxpWebViewFragment)?.setBottomBarVisibleOverride(false)
         // 重新创建菜单
         invalidateOptionsMenu()
     }

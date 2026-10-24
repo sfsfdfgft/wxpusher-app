@@ -434,11 +434,6 @@ open class WxpWebViewFragment : WxpBaseFragment() {
         if (!isHostInWhitelist(host)) {
             return false
         }
-        //班级系统站点没有 WxPusher 的 FE 版本机制，跳过版本比对与缓存清理，
-        //否则路径里带 /app 会被误判成 WxPusher 前端资源而清空缓存。
-        if (host == WxpWebHostPolicy.CLASS_SITE_HOST) {
-            return false
-        }
         return path.contains("/app")
     }
 
@@ -491,8 +486,6 @@ open class WxpWebViewFragment : WxpBaseFragment() {
      * 对照 iOS WxpWebViewController.loadAdIfNeeded。
      */
     private fun loadAdIfNeeded() {
-        //保留官方原样的广告逻辑（按客服要求，定制版不改这部分）。
-        //班级页传的是 showAd=false，这里第一行就会 return，所以班级页面不会出现广告条。
         if (!showAd || adRequested) return
         if (!WxpPangleAdManager.isReady()) return
         adRequested = true

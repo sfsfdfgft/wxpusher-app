@@ -28,6 +28,7 @@ import com.smjcco.wxpusher.common.WxpSaveKey
 import com.smjcco.wxpusher.page.main.fragment.ITabMenuProvider
 import com.smjcco.wxpusher.page.main.fragment.MessageListFragment
 import com.smjcco.wxpusher.page.main.fragment.ProfileFragment
+import com.smjcco.wxpusher.page.main.fragment.WxpClassFragment
 import com.smjcco.wxpusher.page.main.fragment.WxpExtFuncFragment
 import com.smjcco.wxpusher.page.main.fragment.WxpProviderListFragment
 import com.smjcco.wxpusher.page.web.WxpWebViewFragment
@@ -337,10 +338,6 @@ class WxpMainActivity : WxpBaseActivity(), CurrentTabProvider {
         } else {
             currentMenuProvider = null
         }
-        //班级页面关掉底部浏览器工具栏（后退/前进/刷新/关闭）。
-        //站点是非官方域名，不在 WxpWebHostPolicy 白名单里，默认会显示这条工具栏；
-        //这里按页面单独关闭，不改动官方白名单，顶部「第三方内容」提醒仍然保留。
-        (fragment as? WxpWebViewFragment)?.setBottomBarVisibleOverride(false)
         // 重新创建菜单
         invalidateOptionsMenu()
     }
@@ -413,7 +410,7 @@ class WxpMainActivity : WxpBaseActivity(), CurrentTabProvider {
 
         override fun createFragment(position: Int): Fragment {
             return when (tabs[position]) {
-                MainTab.CLASS -> WxpWebViewFragment.newInstance(CLASS_SITE_URL, false)
+                MainTab.CLASS -> WxpClassFragment.newInstance(CLASS_SITE_URL)
                 MainTab.MESSAGE_LIST -> MessageListFragment()
                 MainTab.MARKET -> WxpProviderListFragment()
                 MainTab.EXT_FUNC -> WxpExtFuncFragment()
